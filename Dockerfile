@@ -1,0 +1,19 @@
+FROM node:10.19.0-buster-slim
+
+EXPOSE 5001
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN mkdir /app && chown node:node /app
+
+USER node
+
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm i --no-optional && npm cache clean --force
+
+ENV PATH=/app/node_modules/.bin:$PATH
+
+WORKDIR /app/node_app
+
+CMD ["npm", "run", "dev"]
