@@ -1,32 +1,50 @@
-var express = require("express");
-var { graphqlHTTP } = require("express-graphql");
-var { buildSchema } = require("graphql");
+const express = require("express");
+const { graphqlHTTP } = require("express-graphql");
+const { buildSchema } = require("graphql");
+const graphql = require("graphql");
 
-// Construct a schema, using GraphQL schema language
-var schema = buildSchema(`
-    type Query {
-        ip: String
-    }
-`);
-const loggingMiddleware = (req, res, next) => {
-  console.log("ip:", req.ip);
-  next();
-};
-// The root provides a resolver function for each API endpoint
-var root = {
-  ip: function (args, request) {
-    return request.ip;
+// Maps id to User object
+var fakeDatabase = {
+  a: {
+    id: "a",
+    name: "alice",
+  },
+  b: {
+    id: "b",
+    name: "bob",
   },
 };
+// Define the User type
+var userType = new graphql.GraphQLObjectType({
+  name: "User",
+  fields: {
+    id: { type: graphql.GraphQLString },
+    name: { type: graphql.GraphQLString },
+  },
+});
+// Define the Query type
+var queryType = new graphql.GraphQLObjectType({
+  name: "Query",
+  fields: {
+    user: {
+      type: userType,
+      // `args` describes the arguments that the `user` query accepts
+      args: {
+        id: { type: graphql.GraphQLString },
+      },
+      resolve: (_, { id }) => {
+        return fakeDatabase[id];
+      },
+    },
+  },
+});
+var schema = new graphql.GraphQLSchema({ query: queryType });
+
 var app = express();
-// Use the logging middleware
-app.use(loggingMiddleware);
-// Use the graphql middleware
 app.use(
   "/graphql",
   graphqlHTTP({
     schema: schema,
-    rootValue: root,
     graphiql: true,
   })
 );
