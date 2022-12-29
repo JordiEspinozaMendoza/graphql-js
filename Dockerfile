@@ -1,4 +1,4 @@
-FROM node:10.19.0-buster-slim
+FROM node:14-alpine
 
 EXPOSE 5001
 

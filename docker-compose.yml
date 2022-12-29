@@ -1,21 +1,21 @@
 version: "3.3"
 services:
-  postgres:
-    image: postgres:12.2
-    container_name: postgres
-    restart: unless-stopped
-    platform: linux/amd64
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    ports:
-      - 5434:5432
-    environment:
-      - POSTGRES_PASSWORD=password321
-      - POSTGRES_USER=user-node
-      - POSTGRES_DB=db-postgre
+  # postgres:
+  #   image: postgres:12.2
+  #   container_name: postgres
+  #   restart: unless-stopped
+  #   platform: linux/amd64
+  #   volumes:
+  #     - ./data/db:/var/lib/postgresql/data
+  #   ports:
+  #     - 5434:5432
+  #   environment:
+  #     - POSTGRES_PASSWORD=password321
+  #     - POSTGRES_USER=user-node
+  #     - POSTGRES_DB=db-postgre
   api:
-    depends_on:
-      - postgres
+    # depends_on:
+    #   - postgres
     build:
       dockerfile: Dockerfile
       context: .
